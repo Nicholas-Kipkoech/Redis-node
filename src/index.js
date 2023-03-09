@@ -1,5 +1,5 @@
 import express from "express";
-import redis from "redis";
+import redis from "ioredis";
 import fetch from "node-fetch";
 
 const app = express();
@@ -7,7 +7,7 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 const REDIS_PORT = process.env.REDIS_PORT || 6379;
 
-const client = redis.createClient(REDIS_PORT);
+const client = redis.createClient();
 
 const setResponse = (username, repos) => {
   return `<h2>${username} has ${repos} github repos</h2>`;
@@ -36,7 +36,7 @@ const getRepos = async (req, res) => {
 
     const repos = data.public_repos;
 
-    client.setEx(username, 3600, repos);
+    client.setex(username, 3500, repos);
 
     res.send(setResponse(username, repos));
   } catch (error) {
